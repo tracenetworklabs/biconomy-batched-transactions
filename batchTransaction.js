@@ -1450,7 +1450,7 @@ const mint = async (userAddress, tokenIPFSPath, paymentToken, feeAmount, tokenId
             biconomy.getSignerByAddress(signerAddress)
         );
 
-        const batchNonce = await forwarderContract.getNonce(userAddress, 0);
+        const batchNonce = await forwarderContract.getNonce(signerAddress, 0);
         console.log("batchNonce", Number(batchNonce));
         
         const gasLimitNum = Number(gasLimit.toNumber().toString());
@@ -1505,18 +1505,15 @@ const sendTransaction = async ({userAddress, request, sig, signatureType}) => {
         .then(async function(result) {
             console.log("result", result);
             console.log(`Transaction sent by relayer with hash ${result.txHash}`);
-            // let receipt = await ethersProvider.getTransactionReceipt(result.txHash);
-            // console.log(`Transaction Confirmed.`);
-            // console.log(receipt);
             //return result.txHash;
         })
-        // .then(function(hash) {
-        //     ethersProvider.once(hash, (transaction) => {
-        //         // Emitted when the transaction has been mined
-        //         console.log("transaction", transaction);
-        //         console.log("hash", hash);
-        //     });
-        // })
+        .then(function(hash) {
+            ethersProvider.once(hash, (transaction) => {
+                // Emitted when the transaction has been mined
+                console.log("transaction", transaction);
+                console.log("hash", hash);
+            });
+        })
         .catch(function(error){
             console.log(error);
         });
